@@ -1,10 +1,26 @@
 ---
 
-
 ---
 
-
-
-<a href="">
-    <slot/>
-</a>
+<section
+  id="asideMenu"
+  class="fixed top-0 right-0 z-40 w-64 h-screen p-4 overflow-y-auto transition-transform -translate-x-full bg-gray-800"
+  tabindex="-1"
+  aria-labelledby="drawer-navigation-label"
+>
+  <h5
+    id="drawer-navigation-label"
+    class="text-base font-semibold text-gray-400 uppercase"
+  >
+    MENU
+  </h5>
+  <button
+    type="button"
+    data-drawer-hide="drawer-navigation"
+    aria-controls="drawer-navigation"
+    class="text-gray-400 bg-transparent hover:bg-gray-600 hover:text-white rounded-lg text-sm p-1.5 absolute top-2.5 end-2.5 inline-flex items-center"
+  >
+    <span class="sr-only">Close Menu</span>
+    <slot />
+  </button>
+</section>

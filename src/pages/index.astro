@@ -1,91 +1,16 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Card from "../components/Card.astro";
+import Model from "../components/Model.astro"
+import AsideMenuItem from "../components/AsideMenuItem.astro";
 ---
 
-<Layout title="Welcome to Astro.">
-  <div class="flex flex-col m-auto items-center" id="canvasEl">
-    <h1 id="coordinates">1231</h1>
-  </div>
+<Layout title="Wwewe">
+  <Model />
 </Layout>
 
-<script>
-  import * as THREE from "three";
-  import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
-  import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-  import Stats from "three/examples/jsm/libs/stats.module.js";
 
-  const canvasEl = document.getElementById("canvasEl");
-
-  const scene = new THREE.Scene();
-  // scene.add(new THREE.AxesHelper(5));
-
-  const light = new THREE.HemisphereLight(0xd1d1d1, 0xb4b4b4, 0.5)
-  scene.add(light)
-  const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-
-  const renderer = new THREE.WebGLRenderer({alpha:0});
-  renderer.setSize(500, 500);
-  renderer.setClearColor(0xffffff, 0)
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true;
-  controls.keys = {
-    UP: "ArrowUp",
-    BOTTOM: "ArrowDown",
-    LEFT: "ArrowLeft",
-    RIGHT: "ArrowRight"
-  }
-
-  controls.maxDistance = 35;
-  controls.minPolarAngle = 0
-  controls.maxPolarAngle = Math.PI * 0.45
-
-  canvasEl.appendChild(renderer.domElement);
-
-  camera.position.set(25, 12, 15)
-
-  const material = new THREE.MeshLambertMaterial({
-    color: 0xffffff
-  });
-
-  const stats = new Stats()
-  canvasEl.appendChild(stats.dom);
-  const loader = new STLLoader();
-  loader.load("./model.stl", function (geometry){
-    const mesh = new THREE.Mesh(geometry, material)
-    mesh.scale.set(0.3,0.3,0.3)
-    mesh.rotation.x = -Math.PI / 2
-    scene.add(mesh)
-  });
-
-  const coordinates = document.getElementById("coordinates");
-  function updateCoors(){
-    const newcords = "x: " + camera.position.x.toFixed(2) + ", y: " + camera.position.y.toFixed(2) + ", z: " + camera.position.z.toFixed(2);
-    coordinates.innerHTML = newcords;
-  }
-  function animate() {
-    requestAnimationFrame(animate);
-    controls.update();
-    stats.update()
-    render();
-    updateCoors()
-  }
-
-  function render() {
-    renderer.render(scene, camera);
-  }
-
-  animate()
-</script>
 
 <style>
-  main {
-    margin: auto;
-    padding: 1rem;
-    width: 800px;
-    max-width: calc(100% - 2rem);
-    color: white;
-    font-size: 20px;
-    line-height: 1.6;
-  }
+
 </style>

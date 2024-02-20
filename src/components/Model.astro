@@ -1,0 +1,150 @@
+---
+import Controls3D from "./Controls3d.astro";
+---
+
+<div class="flex flex-col m-auto items-center">
+  <div id="canvasEl"></div>
+  <h1 id="coordinates">1231</h1>
+  <Controls3D />
+</div>
+
+<script>
+  import * as THREE from "three";
+  import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+  import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+  import Stats from "three/examples/jsm/libs/stats.module.js";
+
+
+  const raycaster = new THREE.Raycaster();
+  const mouse = new THREE.Vector2();
+
+  function raycast (e) {
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(scene.children, true)
+    if(intersects.length > 0){
+      const clickedObj = intersects[0].object;
+      log(clickedObj)
+    }
+  }
+
+  const log = (obj) =>{
+    console.log("The clicked object is: ", obj)
+    obj.mesh
+  }
+
+
+  window.addEventListener("click", raycast, false)
+
+  const canvasEl = document.getElementById("canvasEl");
+
+  const scene = new THREE.Scene();
+  // scene.add(new THREE.AxesHelper(5));
+
+  const hlight = new THREE.HemisphereLight(0xffffff, 0xb4b4b4, 1);
+  scene.add(hlight);
+
+  const light = new THREE.SpotLight(0xfffff, 10);
+
+  light.position.set(0, 500, 0);
+  light.angle = Math.PI / 4;
+
+  scene.add(light);
+
+  const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+
+  const renderer = new THREE.WebGLRenderer({ alpha: 0 });
+  renderer.setSize(600, 500);
+  renderer.setClearColor(0xffffff, 0);
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.listenToKeyEvents(window);
+  controls.keys = {
+    UP: "ArrowUp",
+    BOTTOM: "ArrowDown",
+    LEFT: "ArrowLeft",
+    RIGHT: "ArrowRight",
+  }
+
+  controls.maxDistance = 200;
+  controls.minPolarAngle = 0;
+  controls.maxPolarAngle = Math.PI * 0.45;
+
+  canvasEl.appendChild(renderer.domElement);
+
+  camera.position.set(40, 20, 29);
+
+  const material = new THREE.MeshLambertMaterial({
+    color: 0xffffff,
+  });
+
+  const material2 = new THREE.MeshLambertMaterial({
+    color: 0xc43232,
+  });
+
+  const material3 = new THREE.MeshLambertMaterial({
+    color: 0x13e41e,
+  });
+
+
+  const stats = new Stats();
+  canvasEl.appendChild(stats.dom);
+
+
+
+  const loader = new STLLoader();
+  loader.load("./model.stl", function (geometry) {
+    const mesh = new THREE.Mesh(geometry, material);
+    const edges = new THREE.EdgesGeometry(geometry)
+    const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({color: 0x000}));
+    line.rotation.x = -Math.PI /2
+    scene.add(line)
+    
+
+    mesh.name = "BASE"
+    mesh.rotation.x = -Math.PI / 2;
+    scene.add(mesh);
+  });
+
+  loader.load("./model2.stl", function (geometry){
+    const mesh = new THREE.Mesh(geometry, material2);
+    mesh.name = "TUBERIA 1"
+    mesh.position.y = 0.5
+    mesh.rotation.x = -Math.PI / 2;
+    scene.add(mesh)
+  })
+
+  loader.load("./model3.stl", function (geometry){
+    const mesh = new THREE.Mesh(geometry, material3);
+    mesh.name = "tuberia 2"
+    mesh.position.y = 0.7
+    mesh.rotation.x = -Math.PI / 2;
+    scene.add(mesh)
+  })
+
+  const coordinates = document.getElementById("coordinates");
+  function updateCoors() {
+    const newcords =
+      "x: " +
+      camera.position.x.toFixed(2) +
+      ", y: " +
+      camera.position.y.toFixed(2) +
+      ", z: " +
+      camera.position.z.toFixed(2);
+    coordinates.innerHTML = newcords;
+  }
+  
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    stats.update();
+    render();
+    updateCoors();
+  }
+
+  function render() {
+    renderer.render(scene, camera);
+  }
+
+  animate();
+</script>
